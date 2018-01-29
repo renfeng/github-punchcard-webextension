@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+	<title>Github Punchcard</title>
+	<meta name="description" content="Github Punchcard">
+
+	<!-- See https://goo.gl/OOhYW5 -->
+	<link rel="manifest" href="manifest.json">
+
+	<!-- See https://goo.gl/qRE0vM -->
+	<meta name="theme-color" content="#3f51b5">
+
+	<!-- Add to homescreen for Chrome on Android. Fallback for manifest.json -->
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="application-name" content="Github Punchcard">
+
+	<!-- Add to homescreen for Safari on iOS -->
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+	<meta name="apple-mobile-web-app-title" content="Github Punchcard">
+
+	<!-- Load webcomponents-loader.js to check and load any polyfills your browser needs -->
+	<!-- webcomponents-loader.js doesn't work with vulcanize -->
+	<!--<script src="components/webcomponentsjs/webcomponents-loader.js"></script>-->
+	<!-- https://github.com/webcomponents/webcomponentsjs#how-to-use -->
+	<script src="components/webcomponentsjs/webcomponents-lite.js"></script>
+
+	<!-- Load your application shell -->
+	<link rel="import" href="components/polymer/lib/elements/dom-bind.html">
+	<link rel="import" href="components/paper-input/paper-input.html"/>
+	<link rel="import" href="components/github-punchcard/github-punchcard.html">
+
+</head>
+<body>
+	<!-- https://www.polymer-project.org/2.0/docs/devguide/templates#dom-bind -->
+	<dom-bind>
+		<template>
+			<paper-input label="User" value="{{user}}"></paper-input>
+			<paper-input label="Repo" value="{{repo}}"></paper-input>
+			<github-punchcard user="{{user}}" repo="{{repo}}"></github-punchcard>
+		</template>
+	</dom-bind>
+	<!--<script>
+		var autobind = document.querySelector('dom-bind');
+		autobind.setProperties({
+			user: "polymer",
+			repo: "polymer",
+		});
+	</script>-->
+</body>
+</html>

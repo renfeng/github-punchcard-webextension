@@ -1,0 +1,8 @@
+*.iml
+.DS_Store
+build.crx
+build/
+components/
+github-punchcard.zip
+node_modules/
+punchcard.svg
