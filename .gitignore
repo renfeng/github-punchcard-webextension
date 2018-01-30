@@ -1,7 +1,7 @@
 *.iml
+*.sh
 .DS_Store
-build.crx
-build/
+build*
 components/
 github-punchcard.zip
 node_modules/

@@ -1,0 +1,23 @@
+{
+  "name": "github-punchcard",
+  "authors": [
+    "Frank R. <renfeng.cn@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jasmine-core": "jasmine#^2.8.0",
+    "paper-input": "PolymerElements/paper-input#^2.0.5",
+    "paper-toast": "PolymerElements/paper-toast#^2.0.0",
+    "github-punchcard": "renfeng/github-punchcard#^0.0.6"
+  }
+}
