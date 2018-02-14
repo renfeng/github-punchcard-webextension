@@ -15,9 +15,10 @@
     "tests"
   ],
   "dependencies": {
+    "github-punchcard": "renfeng/github-punchcard#^0.0.6",
     "jasmine-core": "jasmine#^2.8.0",
+    "app-route": "PolymerElements/app-route#^2.0.3",
     "paper-input": "PolymerElements/paper-input#^2.0.5",
-    "paper-toast": "PolymerElements/paper-toast#^2.0.0",
-    "github-punchcard": "renfeng/github-punchcard#^0.0.6"
+    "paper-toast": "PolymerElements/paper-toast#^2.0.0"
   }
 }

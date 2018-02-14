@@ -29,26 +29,50 @@
 	<script src="components/webcomponentsjs/webcomponents-lite.js"></script>
 
 	<!-- Load your application shell -->
-	<link rel="import" href="components/polymer/lib/elements/dom-bind.html">
-	<link rel="import" href="components/paper-input/paper-input.html"/>
+	<link rel="import" href="components/app-route/app-location.html"/>
+	<link rel="import" href="components/app-route/app-route.html"/>
 	<link rel="import" href="components/github-punchcard/github-punchcard.html">
+	<link rel="import" href="components/paper-input/paper-input.html"/>
+	<link rel="import" href="components/polymer/lib/elements/dom-bind.html">
 
 </head>
 <body>
 	<!-- https://www.polymer-project.org/2.0/docs/devguide/templates#dom-bind -->
 	<dom-bind>
 		<template>
-			<paper-input label="User" value="{{user}}"></paper-input>
-			<paper-input label="Repo" value="{{repo}}"></paper-input>
-			<github-punchcard user="{{user}}" repo="{{repo}}"></github-punchcard>
+			<app-location route="{{route}}" use-hash-as-path></app-location>
+			<app-route route="{{route}}" pattern=":user/:repo" data="{{routeData}}" tail="{{routeTail}}"></app-route>
+
+			<paper-input label="User" value="{{routeData.user}}"></paper-input>
+			<paper-input label="Repo" value="{{routeData.repo}}"></paper-input>
+			<github-punchcard user="{{routeData.user}}" repo="{{routeData.repo}}"></github-punchcard>
 		</template>
 	</dom-bind>
-	<!--<script>
-		var autobind = document.querySelector('dom-bind');
-		autobind.setProperties({
-			user: "polymer",
-			repo: "polymer",
+	<script>
+		/*
+		 * https://stackoverflow.com/questions/5039875/debug-popup-html-of-a-chrome-extension
+		 * https://stackoverflow.com/questions/13359421/chrome-extension-get-current-tab-from-popup
+		 */
+		//chrome.tabs.getCurrent(function(tab){
+		chrome.tabs.query({ active: true, currentWindow: true }, function(tabs){
+			var tab = tabs[0];
+			console.log("popup");
+			console.log(tab);
+			var urlPattern1 = new RegExp("https://github.com/([^/]+)/([^/]+).*");
+			var g = tab.url.match(urlPattern1);
+			var autobind = document.querySelector('dom-bind');
+			if (g) {
+				autobind.setProperties({
+					"routeData.user": g[1],
+					"routeData.repo": g[2],
+				});
+			} else {
+				autobind.setProperties({
+					"routeData.user": "renfeng",
+					"routeData.repo": "github-punchcard-webextension",
+				});
+			}
 		});
-	</script>-->
+	</script>
 </body>
 </html>

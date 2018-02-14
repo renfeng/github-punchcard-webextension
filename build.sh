@@ -8,10 +8,16 @@ mkdir -p build
 
 # meta
 cp src/manifest.json build/
+
+# https://stackoverflow.com/questions/13040955/can-i-hide-my-extensions-icon-by-default
 cp src/icon.png build/
+
 cp src/background.js build/
+
 cp src/content.js build/
 cp components/github-punchcard/PunchCard.js build/
+
+cp src/sw.js build/
 
 # options page
 # https://github.com/PolymerLabs/crisper#usage-with-vulcanize
@@ -28,5 +34,11 @@ rm github-punchcard.zip
 pushd build
 zip ../github-punchcard.zip *
 popd
+
+# Chrome Web Store - Select Edit, upload the new package, and hit Publish.
+# https://chrome.google.com/webstore/developer/edit/bpbennifjflmjcnoofbeaoiffphdbbad
+
+# Add-ons for FireFox - Upload New Version
+# https://addons.mozilla.org/en-US/developers/addon/github-punchcard/edit
 
 popd

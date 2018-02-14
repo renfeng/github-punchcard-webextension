@@ -12,9 +12,25 @@
 //"https://github.com/*/*/network",
 //"https://github.com/*/*/network/members"
 
-function inject(user, repo) {
+function inject(user, repo, page) {
+
+	if (page) {
+		//var a = document.querySelector("a[href='/" + user + "/" + repo + "/" + page + "']");
+		var a = document.querySelector("a.selected");
+		while (a != null) {
+			a.classList.remove("selected");
+			a = document.querySelector("a.selected");
+		}
+
+		var b = document.querySelector("a[href='/" + user + "/" + repo + "/" + "graphs/punchcard" + "']");
+		b.classList.add("selected");
+	}
+
 	var c = document.querySelector("div.column.three-fourths");
-	console.log(c);
+	if (!c) {
+		console.error("container not found: div.column.three-fourths");
+		return;
+	}
 
 	/*
 	 * the name self is borrowed from the web component (github-punchcard.html), and has nothing special here
@@ -100,23 +116,36 @@ function inject(user, repo) {
 //var documentClone;
 
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponseCallback) {
-	console.log("message received");
+	console.log("message received by content");
+	//console.log(document.readyState);
 
 	if (message.page) {
 		var x = document.evaluate("//a[text()='Punchcard']", document, null, XPathResult.ANY_TYPE, null);
 		if (x.iterateNext()) {
+			/*
+			 * Punchcard menu added
+			 */
 			return;
 		}
+
+		/*
+		 * Add Punchcard menu above Code frequency
+		 */
 
 		/*
 		 * https://stackoverflow.com/questions/37098405/javascript-queryselector-find-div-by-innertext
 		 */
 		x = document.evaluate("//a[text()='Code frequency']", document, null, XPathResult.ANY_TYPE, null);
 		var a = x.iterateNext();
+		if (!a) {
+			console.warn("Code frequency not found");
+			return;
+		}
+		console.log("Code frequency located");
 
 		var b = a.cloneNode();
 		b.innerText = "Punchcard";
-		b.href = a.href.replace("code-frequency", "punchcard");
+		b.href = a.href.replace("code-frequency", "punchcard").replace("https://github.com", "");
 		b.setAttribute("data-selected-links", a.getAttribute("data-selected-links").replace("code-frequency", "punchcard"));
 
 		/*
@@ -127,19 +156,27 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponseCallb
 		b.onclick = function() {
 			//documentClone = document.cloneNode(true);
 
-			a = document.querySelector("a[href='/" + message.user + "/" + message.repo + "/" + message.page + "']");
-			a.classList.remove("selected");
-
-			b.classList.add("selected");
-
-			try {
-				inject(message.user, message.repo);
-			} finally {
-				return false;
+			if (!serviceWorker) {
+				try {
+					inject(message.user, message.repo, message.page);
+				} finally {
+					/*
+					 * the link is canceled
+					 * TODO uncomment to see the experimental behaviour
+					 *
+					 * prevents loading content (http 404) from github.com
+					 * the only drawback is the url stays the same as the insight (graphs) page last visited
+					 * TODO update browser address bar
+					 */
+					return false;
+				}
 			}
 		}
 		a.parentElement.insertBefore(b, a);
 	} else {
+		/*
+		 * won't reach here if the link is canceled
+		 */
 		//console.log(documentClone);
 		inject(message.user, message.repo);
 	}
@@ -154,3 +191,16 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponseCallb
 //		console.log(chrome.runtime.lastError);
 //	}
 //});
+
+/*
+ * Uncaught (in promise) DOMException: Failed to register a ServiceWorker: The origin of the provided scriptURL ('chrome-extension://iddokbfjdfnbmljmiilblmfnlibmjhhn') does not match the current origin ('https://github.com').
+ *
+ * Is it possible to serve service workers from CDN/remote origin?
+ * https://github.com/w3c/ServiceWorker/issues/940
+ */
+var serviceWorker = false;
+//if (navigator.serviceWorker) {
+//	navigator.serviceWorker.register("chrome-extension://" + chrome.runtime.id + "/sw.js").then(function() {
+//		serviceWorker = true;
+//	});
+//}
