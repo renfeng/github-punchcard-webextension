@@ -58,7 +58,7 @@
 			var tab = tabs[0];
 			console.log("popup");
 			console.log(tab);
-			var urlPattern1 = new RegExp("https://github.com/([^/]+)/([^/]+).*");
+			var urlPattern1 = new RegExp("^https://github.com/([^/]+)/([^/#]+)");
 			var g = tab.url.match(urlPattern1);
 			var autobind = document.querySelector('dom-bind');
 			if (g) {
