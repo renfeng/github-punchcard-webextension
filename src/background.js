@@ -26,6 +26,12 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo) {
 				user: g[1],
 				repo: g[2],
 				page: g[3],
+			}, function(response) {
+				if (response) {
+					console.log(response);
+				} else {
+					console.log(chrome.runtime.lastError);
+				}
 			});
 		} else {
 			g = tab.url.match(urlPattern2);
@@ -44,6 +50,12 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo) {
 				chrome.tabs.sendMessage(tabId, {
 					user: g[1],
 					repo: g[2],
+				}, function(response) {
+					if (response) {
+						console.log(response);
+					} else {
+						console.log(chrome.runtime.lastError);
+					}
 				});
 			}
 		}

@@ -33,6 +33,7 @@
 	<link rel="import" href="components/app-route/app-route.html"/>
 	<link rel="import" href="components/github-punchcard/github-punchcard.html">
 	<link rel="import" href="components/paper-input/paper-input.html"/>
+	<link rel="import" href="components/paper-toast/paper-toast.html"/>
 	<link rel="import" href="components/polymer/lib/elements/dom-bind.html">
 
 </head>
@@ -45,10 +46,13 @@
 
 			<paper-input label="User" value="{{routeData.user}}"></paper-input>
 			<paper-input label="Repo" value="{{routeData.repo}}"></paper-input>
-			<github-punchcard user="{{routeData.user}}" repo="{{routeData.repo}}"></github-punchcard>
+			<github-punchcard id="punchcard" user="{{routeData.user}}" repo="{{routeData.repo}}"></github-punchcard>
+			<paper-toast id="toast" duration="Infinity"></paper-toast>
 		</template>
 	</dom-bind>
 	<script>
+		var scope = document.querySelector("dom-bind");
+
 		/*
 		 * https://stackoverflow.com/questions/5039875/debug-popup-html-of-a-chrome-extension
 		 * https://stackoverflow.com/questions/13359421/chrome-extension-get-current-tab-from-popup
@@ -60,17 +64,25 @@
 			console.log(tab);
 			var urlPattern1 = new RegExp("^https://github.com/([^/]+)/([^/#]+)");
 			var g = tab.url.match(urlPattern1);
-			var autobind = document.querySelector('dom-bind');
 			if (g) {
-				autobind.setProperties({
+				scope.setProperties({
 					"routeData.user": g[1],
 					"routeData.repo": g[2],
 				});
 			} else {
-				autobind.setProperties({
+				scope.setProperties({
 					"routeData.user": "renfeng",
 					"routeData.repo": "github-punchcard-webextension",
 				});
+			}
+		});
+
+		scope.$.punchcard.addEventListener("message", function (e) {
+			if (e.detail) {
+				scope.$.toast.text = e.detail.text;
+				scope.$.toast.open();
+			} else {
+				scope.$.toast.close();
 			}
 		});
 	</script>

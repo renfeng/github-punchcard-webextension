@@ -125,6 +125,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponseCallb
 			/*
 			 * Punchcard menu added
 			 */
+			sendResponseCallback("skipped existing");
 			return;
 		}
 
@@ -139,6 +140,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponseCallb
 		var a = x.iterateNext();
 		if (!a) {
 			console.warn("Code frequency not found");
+			sendResponseCallback("insertion point not found");
 			return;
 		}
 		console.log("Code frequency located");
@@ -182,6 +184,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponseCallb
 	}
 
 	//return true;
+	sendResponseCallback("menu link injected");
 });
 
 //chrome.runtime.sendMessage({}, function(response) {
