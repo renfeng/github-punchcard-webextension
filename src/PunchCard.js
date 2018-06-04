@@ -96,12 +96,6 @@ function PunchCard(authorization) {
 		}
 		t.appendChild(r);
 
-		/*
-		 * https://stackoverflow.com/questions/3955229/remove-all-child-elements-of-a-dom-node-in-javascript
-		 */
-		while (c.firstChild) {
-			c.removeChild(c.firstChild);
-		}
 		c.appendChild(t);
 
 		return Promise.resolve(self);

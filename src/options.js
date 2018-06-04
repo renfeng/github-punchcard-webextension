@@ -27,11 +27,11 @@ document.querySelector("#token").onclick = function() {
 				if (tab.url === "https://github.com/settings/tokens/new" &&
 						tokenGuide == "generate") {
 					chrome.tabs.sendMessage(tabId, {
-						tokenGuide: tokenGuide,
+						tokenGuide: "generate",
 					}, function(response) {
 						if (response) {
 							console.log(response);
-							tokenGuide = "copy";
+							tokenGuide = response.tokenGuide;
 						} else {
 							console.log(chrome.runtime.lastError);
 						}
@@ -39,7 +39,7 @@ document.querySelector("#token").onclick = function() {
 				} else if (tab.url === "https://github.com/settings/tokens" &&
 						tokenGuide == "copy") {
 					chrome.tabs.sendMessage(tabId, {
-						tokenGuide: tokenGuide,
+						tokenGuide: "copy",
 					}, function(response) {
 						if (response) {
 							console.log(response);

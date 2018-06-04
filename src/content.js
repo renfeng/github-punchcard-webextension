@@ -137,47 +137,49 @@ function inject(user, repo, page, graph) {
 			var b = document.querySelector("a[href='/" + user + "/" + repo + "/" + "graphs/punchcard" + "' i]");
 			b.classList.add("selected");
 
-			return new PunchCard(authorization).load(user, repo)
-			.then(function(punchCard) {
-				var c = document.querySelector("div.column.three-fourths");
-				if (c) {
-					return Promise.resolve(punchCard.render(c));
-				} else {
-					return Promise.reject("container not found: div.column.three-fourths");
-				}
-			}).catch(function(message) {
+			var c = document.querySelector("div.column.three-fourths");
+			if (c) {
 				/*
-				 * https://stackoverflow.com/questions/3468607/why-does-settimeout-break-for-large-millisecond-delay-values
-				 * https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setTimeout
+				 * https://stackoverflow.com/questions/3955229/remove-all-child-elements-of-a-dom-node-in-javascript
 				 */
-				//var maxDelay = 2147483647;
-				var private = document.body.innerText.match(/\bPrivate\b/) != null;
-				if (private && (message == "404 (Not Found)" || message == "401 (Unauthorized)")) {
-					var c = document.querySelector("div.column.three-fourths");
-					if (c) {
-						while (c.firstChild) {
-							c.removeChild(c.firstChild);
-						}
+				while (c.firstChild) {
+					c.removeChild(c.firstChild);
+				}
 
+				return new PunchCard(authorization).load(user, repo)
+				.then(function(punchCard) {
+					return Promise.resolve(punchCard.render(c));
+				}).catch(function(message) {
+					var private = document.body.innerText.match(/\bPrivate\b/) != null;
+					if (private && (message == "404 (Not Found)" || message == "401 (Unauthorized)")) {
 						var p = document.createElement("p");
 						p.innerText = message;
 						c.appendChild(p);
 
-						var a = document.createElement("a");
-						a.onclick = function() {
-							chrome.runtime.openOptionsPage();
-							return false;
-						};
-						a.innerText = "Why?";
-						c.appendChild(p);
-					} else {
 						/*
-						 * TODO alert
+						 * TODO link to open options page
+						 * https://stackoverflow.com/questions/3418043/link-from-content-script-to-options-page
 						 */
-						console.log(message);
+						var a = document.createElement("a");
+						a.href = chrome.extension.getURL("options.html");
+//						a.onclick = function() {
+//							window.open(chrome.extension.getURL("options.html"));
+//						};
+						a.target = a.href;
+						a.innerText = "Why?";
+						c.appendChild(a);
 					}
-				}
-			});
+				});
+			} else {
+				/*
+				 * TODO toast
+				 * https://stackoverflow.com/questions/3468607/why-does-settimeout-break-for-large-millisecond-delay-values
+				 * https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setTimeout
+				 */
+				//var maxDelay = 2147483647;
+//				return Promise.reject("container not found: div.column.three-fourths");
+				console.error("container not found: div.column.three-fourths");
+			}
 		}
 	});
 }
@@ -188,18 +190,20 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponseCallb
 
 	try {
 		if (message.tokenGuide == "generate") {
-			var isFirefox = typeof InstallTrigger !== 'undefined';
-			if (isFirefox) {
-				document.querySelector("#oauth_access_description").value = "Github Punchcard Web Extension for Firefox";
+			if (document.querySelector("#sudo_password")) {
+				sendResponseCallback({tokenGuide: "generate"});
 			} else {
-				document.querySelector("#oauth_access_description").value = "Github Punchcard Web Extension for Chrome";
+				var isFirefox = typeof InstallTrigger !== 'undefined';
+				document.querySelector("#oauth_access_description").value =
+					"Github Punchcard Web Extension for " + (isFirefox ? "Firefox" : "Chrome");
+				if (!document.querySelector("#oauth_access_scopes_repo").checked) {
+					document.querySelector("#oauth_access_scopes_repo").click();
+				}
+				var x = document.evaluate("//button[text()='Generate token']", document, null, XPathResult.ANY_TYPE, null);
+				var b = x.iterateNext();
+				b.click();
+				sendResponseCallback({tokenGuide: "copy"});
 			}
-			if (!document.querySelector("#oauth_access_scopes_repo").checked) {
-				document.querySelector("#oauth_access_scopes_repo").click();
-			}
-			var x = document.evaluate("//button[text()='Generate token']", document, null, XPathResult.ANY_TYPE, null);
-			var b = x.iterateNext();
-			b.click();
 		} else if (message.tokenGuide == "copy") {
 			var token = document.querySelector("#new-oauth-token");
 			if (token) {
@@ -214,8 +218,10 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponseCallb
 					throw("Unknown error. A clue is probably available on the page.");
 				}
 			}
+			sendResponseCallback({});
 		} else if (message.user && message.repo) {
-			return inject(message.user, message.repo, message.page);
+			inject(message.user, message.repo, message.page);
+			sendResponseCallback({});
 		} else {
 			var img404 = document.querySelector("img[alt='404 “This is not the web page you are looking for”']");
 			var private = document.body.innerText.match(/\bPrivate\b/) != null;

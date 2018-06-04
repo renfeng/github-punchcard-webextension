@@ -9,13 +9,6 @@ document.querySelector("#diagnose").onclick = function() {
 	return false;
 }
 
-function diagnose() {
-	/*
-	 * https://stackoverflow.com/questions/6782391/programmatically-open-a-chrome-plugins-options-html-page
-	 */
-	chrome.runtime.openOptionsPage();
-}
-
 /*
  * https://developer.chrome.com/extensions/tabs#method-getCurrent
  * May be undefined if called from a non-tab context (for example: a background page or popup view).
