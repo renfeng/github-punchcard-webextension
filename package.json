@@ -1,0 +1,19 @@
+{
+	"name": "github-punchcard",
+	"version": "1.0.0",
+	"description": "https://chrome.google.com/webstore/detail/github-punchcard/bpbennifjflmjcnoofbeaoiffphdbbad",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"jasmine": "^3.1.0",
+		"npm": "^6.1.0"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/renfeng/github-punchcard-webextension"
+	}
+}

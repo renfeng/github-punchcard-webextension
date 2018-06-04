@@ -2,7 +2,7 @@
  * https://stackoverflow.com/questions/17377337/where-to-find-extensions-installed-folder-for-google-chrome-on-mac
  */
 
-function inject(authorization, user, repo, page, graph) {
+function inject(user, repo, page, graph) {
 
 	var promise = Promise.resolve();
 	if (page == "graphs/punchcard") {
@@ -42,16 +42,36 @@ function inject(authorization, user, repo, page, graph) {
 			document.body.innerHTML = text.match(/<body\b[^>]*>((?:.*\n)+.*)<\/body>/)[1];
 
 			return Promise.resolve(self);
-		}).catch(function(error) {
-			if (error instanceof TypeError) {
-				return Promise.reject(error.stack);
-			} else {
-				return Promise.reject(error);
-			}
 		});
 	}
 
-	promise.then(function() {
+	return promise.then(function() {
+
+		var private = document.body.innerText.match(/\bPrivate\b/) != null;
+		var disabled = document.body.innerText.indexOf("This repository has been disabled.") != -1;
+		var user = document.querySelector("strong.css-truncate-target");
+
+		if (private) {
+			return new Promise(function(resolve, reject) {
+				chrome.storage.sync.get(["token"], function(result) {
+					if (result) {
+						console.log("Value currently is " + result.token);
+						var token = result.token;
+						resolve("Basic " + btoa(user.innerText + ":" + token));
+					} else {
+						var isFirefox = typeof InstallTrigger !== 'undefined';
+						if (isFirefox) {
+							reject("Please set webextensions.storage.sync.enabled to true in about:config");
+						} else {
+							reject("Cannot get stored token");
+						}
+					}
+				});
+			});
+		} else {
+			return Promise.resolve();
+		}
+	}).then(function(authorization) {
 		var x = document.evaluate("//a[text()='Punchcard']", document, null, XPathResult.ANY_TYPE, null);
 		if (x.iterateNext()) {
 			/*
@@ -81,7 +101,7 @@ function inject(authorization, user, repo, page, graph) {
 				b.onclick = function() {
 					if (!serviceWorker) {
 						try {
-							inject(authorization, user, repo, page, true);
+							inject(user, repo, page, true);
 						} finally {
 							/*
 							 * cancels the link to prevent http 404
@@ -117,16 +137,46 @@ function inject(authorization, user, repo, page, graph) {
 			var b = document.querySelector("a[href='/" + user + "/" + repo + "/" + "graphs/punchcard" + "' i]");
 			b.classList.add("selected");
 
-			new PunchCard(authorization).load(user, repo)
+			return new PunchCard(authorization).load(user, repo)
 			.then(function(punchCard) {
 				var c = document.querySelector("div.column.three-fourths");
 				if (c) {
-					punchCard.render(c);
+					return Promise.resolve(punchCard.render(c));
 				} else {
-					console.error("container not found: div.column.three-fourths");
+					return Promise.reject("container not found: div.column.three-fourths");
 				}
-			}).catch(function(e) {
-				console.log(e);
+			}).catch(function(message) {
+				/*
+				 * https://stackoverflow.com/questions/3468607/why-does-settimeout-break-for-large-millisecond-delay-values
+				 * https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setTimeout
+				 */
+				//var maxDelay = 2147483647;
+				var private = document.body.innerText.match(/\bPrivate\b/) != null;
+				if (private && (message == "404 (Not Found)" || message == "401 (Unauthorized)")) {
+					var c = document.querySelector("div.column.three-fourths");
+					if (c) {
+						while (c.firstChild) {
+							c.removeChild(c.firstChild);
+						}
+
+						var p = document.createElement("p");
+						p.innerText = message;
+						c.appendChild(p);
+
+						var a = document.createElement("a");
+						a.onclick = function() {
+							chrome.runtime.openOptionsPage();
+							return false;
+						};
+						a.innerText = "Why?";
+						c.appendChild(p);
+					} else {
+						/*
+						 * TODO alert
+						 */
+						console.log(message);
+					}
+				}
 			});
 		}
 	});
@@ -137,21 +187,12 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponseCallb
 	//console.log(document.readyState);
 
 	try {
-		var img404 = document.querySelector("img[alt='404 “This is not the web page you are looking for”']");
-		var private = document.body.innerText.match(/\bPrivate\b/) != null;
-		var disabled = document.body.innerText.indexOf("This repository has been disabled.") != -1;
-		var user = document.querySelector("strong.css-truncate-target");
-		var error = null;
-
 		if (message.tokenGuide == "generate") {
-			var isChrome = !!window.chrome && !!window.chrome.webstore;
-			if (isChrome) {
-				document.querySelector("#oauth_access_description").value = "Github Punchcard Web Extension for Chrome";
+			var isFirefox = typeof InstallTrigger !== 'undefined';
+			if (isFirefox) {
+				document.querySelector("#oauth_access_description").value = "Github Punchcard Web Extension for Firefox";
 			} else {
-				var isFirefox = typeof InstallTrigger !== 'undefined';
-				if (isFirefox) {
-					document.querySelector("#oauth_access_description").value = "Github Punchcard Web Extension for Firefox";
-				}
+				document.querySelector("#oauth_access_description").value = "Github Punchcard Web Extension for Chrome";
 			}
 			if (!document.querySelector("#oauth_access_scopes_repo").checked) {
 				document.querySelector("#oauth_access_scopes_repo").click();
@@ -168,21 +209,26 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponseCallb
 			} else {
 				var e = document.querySelector("dd.error");
 				if (e) {
-					error = e.innerText;
+					throw(e.innerText);
 				} else {
-					error = "Unknown error. A clue is probably available on the page.";
+					throw("Unknown error. A clue is probably available on the page.");
 				}
 			}
 		} else if (message.user && message.repo) {
-			inject(message.authorization, message.user, message.repo, message.page);
+			return inject(message.user, message.repo, message.page);
+		} else {
+			var img404 = document.querySelector("img[alt='404 “This is not the web page you are looking for”']");
+			var private = document.body.innerText.match(/\bPrivate\b/) != null;
+			var disabled = document.body.innerText.indexOf("This repository has been disabled.") != -1;
+			var user = document.querySelector("strong.css-truncate-target");
+
+			sendResponseCallback({
+				img404: img404,
+				private: private,
+				disabled: disabled,
+				user: user&&user.innerText,
+			});
 		}
-		sendResponseCallback({
-			img404: img404,
-			private: private,
-			disabled: disabled,
-			user: user&&user.innerText,
-			error: error,
-		});
 	} catch (error) {
 		sendResponseCallback({
 			error: error,
