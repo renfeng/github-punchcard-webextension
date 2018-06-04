@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 pushd $(dirname $0)
 
-# TODO migrate to npm
-bower i
+npm i
 
 mkdir -p build
 
@@ -15,20 +14,21 @@ cp src/icon.png build/
 cp src/background.js build/
 
 cp src/content.js build/
-cp components/github-punchcard/PunchCard.js build/
+cp src/PunchCard.js build/
 
 cp src/sw.js build/
 
 # options page
 # https://github.com/PolymerLabs/crisper#usage-with-vulcanize
-vulcanize options.html --inline-script | crisper --html build/options.html --js build/options.js
+vulcanize src/options.html --inline-script | crisper --html build/options.html --js build/options.js
+vulcanize src/popup.html --inline-script | crisper --html build/popup.html --js build/popup.js
 
 # test page
 vulcanize test.html --inline-script | crisper --html build/test.html --js build/test.js
-cp components/jasmine-core/images/jasmine_favicon.png build/
-cp components/jasmine-core/lib/jasmine-core/jasmine.css build/
-sed -i "" s~components/jasmine-core/images/~~g build/test.html
-sed -i "" s~components/jasmine-core/lib/jasmine-core/~~g build/test.html
+cp node_modules/jasmine-core/images/jasmine_favicon.png build/
+cp node_modules/jasmine-core/lib/jasmine-core/jasmine.css build/
+sed -i "" s~node_modules/jasmine-core/images/~~g build/test.html
+sed -i "" s~node_modules/jasmine-core/lib/jasmine-core/~~g build/test.html
 
 rm github-punchcard.zip
 pushd build

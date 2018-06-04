@@ -1,7 +1,7 @@
 {
 	"manifest_version": 2,
 	"name": "Github Punchcard",
-	"version": "0.3",
+	"version": "0.5",
 	"description": "Restores Github Punchcard graph",
 	"background": {
 		"scripts": [
@@ -11,7 +11,7 @@
 	"browser_action": {
 		"default_icon": "icon.png",
 		"default_title": "Github Punchcard",
-		"default_popup": "options.html"
+		"default_popup": "popup.html"
 	},
 	"options_ui": {
 		"page": "options.html",
@@ -22,6 +22,7 @@
 		"webRequest",
 		"webRequestBlocking",
 		"tabs",
+		"storage",
 		"https://api.github.com/*",
 		"https://github.com/*"
 	],
@@ -33,7 +34,8 @@
 			],
 			"matches": [
 				"https://github.com/*"
-			]
+			],
+			"run_at": "document_start"
 		}
 	]
 }

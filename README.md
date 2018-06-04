@@ -8,6 +8,8 @@ https://addons.mozilla.org/en-US/firefox/addon/github-punchcard/
 
 # Background Story
 
+http://openmymind.net/How-Meaningful-Do-You-Find-Github-Punchard/
+
 https://www.reddit.com/r/github/comments/768oqr/is_the_punchcard_graph_gone_now/
 
 *  https://issarice.com/github-punch-card-exploration
