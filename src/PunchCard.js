@@ -50,14 +50,14 @@ function PunchCard(authorization) {
 	this.render = function (c) {
 
 		var minSpace = 25;
-		for (var day of self.table) {
-			for (var hour of day) {
-				var d = diameter(hour);
-				if (minSpace < d) {
-					minSpace = d;
-				}
-			}
-		}
+//		for (var day of self.table) {
+//			for (var hour of day) {
+//				var d = diameter(hour);
+//				if (minSpace < d) {
+//					minSpace = d;
+//				}
+//			}
+//		}
 
 		/*
 		 * TODO make it look more like the original graph
@@ -78,7 +78,7 @@ function PunchCard(authorization) {
 				r.appendChild(d);
 
 				var v = document.createElement("div");
-				v.style = "margin: auto; background-color: black; border-radius: 50%; width: " + diameter(hour) + "px; height: " + diameter(hour) + "px;";
+				v.style = "margin: auto; background-color: #444444; border-radius: 50%; width: " + diameter(hour) + "px; height: " + diameter(hour) + "px;";
 				d.appendChild(v);
 			}
 

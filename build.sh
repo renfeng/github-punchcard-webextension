@@ -8,7 +8,7 @@ mkdir -p build
 # meta
 cp src/manifest.json build/
 
-# https://stackoverflow.com/questions/13040955/can-i-hide-my-extensions-icon-by-default
+# Icon cannot be hidden. see https://stackoverflow.com/questions/13040955/can-i-hide-my-extensions-icon-by-default
 cp src/icon.png build/
 
 cp src/background.js build/
@@ -16,9 +16,9 @@ cp src/background.js build/
 cp src/content.js build/
 cp src/PunchCard.js build/
 
-cp src/sw.js build/
+#cp src/sw.js build/
+cp src/background.png build/
 
-# options page
 # https://github.com/PolymerLabs/crisper#usage-with-vulcanize
 vulcanize src/options.html --inline-script | crisper --html build/options.html --js build/options.js
 vulcanize src/popup.html --inline-script | crisper --html build/popup.html --js build/popup.js
@@ -35,10 +35,12 @@ pushd build
 zip ../github-punchcard.zip *
 popd
 
-# Chrome Web Store - Select Edit, upload the new package, and hit Publish.
-# https://chrome.google.com/webstore/developer/edit/bpbennifjflmjcnoofbeaoiffphdbbad
-
-# Add-ons for FireFox - Upload New Version
-# https://addons.mozilla.org/en-US/developers/addon/github-punchcard/edit
+echo
+echo "Chrome Web Store - Select Edit, upload the new package, and hit Publish."
+echo "https://chrome.google.com/webstore/developer/edit/bpbennifjflmjcnoofbeaoiffphdbbad"
+echo
+echo "Add-ons for FireFox - Upload New Version"
+echo "https://addons.mozilla.org/en-US/developers/addon/github-punchcard/edit"
+echo
 
 popd

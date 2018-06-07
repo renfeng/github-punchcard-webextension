@@ -28,7 +28,7 @@ chrome.tabs.query({ active: true, currentWindow: true }, function(tabs){
 		var repo = g[2];
 
 		if (user == "settings") {
-			document.querySelector("#sample").hidden = false;
+			document.querySelector("#msg-invalid").hidden = false;
 		} else {
 			/*
 			 * get information on current tab
@@ -68,6 +68,8 @@ chrome.tabs.query({ active: true, currentWindow: true }, function(tabs){
 							.then(function(punchCard) {
 								return punchCard.render(document.querySelector("#container"));
 							});
+						}).then(function() {
+							document.body.classList.add("punchcard");
 						}).catch(function(message) {
 							/*
 							 * https://stackoverflow.com/questions/3468607/why-does-settimeout-break-for-large-millisecond-delay-values
@@ -82,11 +84,15 @@ chrome.tabs.query({ active: true, currentWindow: true }, function(tabs){
 					}
 				} else {
 					console.log(chrome.runtime.lastError);
-					document.querySelector("#msg").innerText = chrome.runtime.lastError.message;
+					if (chrome.runtime.lastError.message == "Could not establish connection. Receiving end does not exist.") {
+						document.querySelector("#msg-refresh").hidden = false;
+					} else {
+						document.querySelector("#msg").innerText = chrome.runtime.lastError.message;
+					}
 				}
 			});
 		}
 	} else {
-		document.querySelector("#sample").hidden = false;
+		document.querySelector("#msg-invalid").hidden = false;
 	}
 });
