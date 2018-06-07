@@ -41,6 +41,7 @@ chrome.tabs.query({ active: true, currentWindow: true }, function(tabs){
 				if (response) {
 					//console.log(response);
 					if (response.img404) {
+						document.querySelector("#parallax_error_text").src = response.img404;
 						document.querySelector("#parallax_error_text").hidden = false;
 					} else if (response.disabled) {
 						document.querySelector("#msg").innerText = "This repository has been disabled.";
@@ -76,18 +77,39 @@ chrome.tabs.query({ active: true, currentWindow: true }, function(tabs){
 							 * https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setTimeout
 							 */
 							//var maxDelay = 2147483647;
-							document.querySelector("#msg").innerText = message;
-							if (response.private && (message == "404 (Not Found)" || message == "401 (Unauthorized)")) {
+
+							/*
+							 * Requests that require authentication will return 404 Not Found
+							 * https://developer.github.com/v3/#authentication
+							 *
+							 * Authenticating with invalid credentials will return 401 Unauthorized
+							 * https://developer.github.com/v3/#failed-login-limit
+							 */
+							if (response.private && message == "404 (Not Found)") {
+								document.querySelector("#msg").innerText = "This is a private repository. A personal access token is required.";
 								document.querySelector("#diagnose").hidden = false;
+							} else if (response.private && message == "401 (Unauthorized)") {
+								document.querySelector("#msg").innerText = "This is a private repository. The personal access token acquired has been revoked.";
+								document.querySelector("#diagnose").hidden = false;
+							} else {
+								document.querySelector("#msg").innerText = message;
+								document.querySelector("#msg-feedback").hidden = false;
 							}
 						});
 					}
 				} else {
 					console.log(chrome.runtime.lastError);
 					if (chrome.runtime.lastError.message == "Could not establish connection. Receiving end does not exist.") {
+						document.querySelector("#refresh").onclick = function() {
+							/*
+							 * https://stackoverflow.com/questions/8342756/chrome-extension-api-for-refreshing-the-page
+							 */
+							chrome.tabs.executeScript(tab.id, {code: "location.reload();"});
+						};
 						document.querySelector("#msg-refresh").hidden = false;
 					} else {
 						document.querySelector("#msg").innerText = chrome.runtime.lastError.message;
+						document.querySelector("#msg-feedback").hidden = false;
 					}
 				}
 			});

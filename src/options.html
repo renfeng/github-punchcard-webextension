@@ -24,7 +24,25 @@
 
 </head>
 <body>
-<a id="token" href="#">Generate new token</a>
+<h1>Are private repos supported?</h1>
+<p>Yes. Here's how.</p>
+<ol>
+	<li>You must be a member of the private repository.</li>
+	<li>Follow this link to <a id="token" href="#">acquire a new personal access token</a>(*).
+		Github will ask you to enter your password if you haven't do so for a while.</li>
+	<li>The token can be reviewed and revoked, <a href="https://github.com/settings/tokens" target="_blank">here</a>.</li>
+</ol>
+<ul>
+	(*) Notes:
+	<li>This web extension uses <a href="https://developer.github.com/v3/">GitHub API v3</a>,
+		which requires authentication. Among the many implementation options,
+		<a href="https://developer.github.com/v3/auth/#via-oauth-tokens">basic authentication
+			via personal access tokens</a> was chosen for its simplicity.</li>
+	<li>The token should be used solely by this web extension. And, it will be stored in
+		<a href="https://chrome.google.com/sync">Chrome sync</a>, or</li>
+	<li>For Firefox a user must have Add-ons checked under the "Sync Settings" options in "about:preferences".
+		See <a href="https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/storage/sync">Firefox sync</a>.</li>
+</ul>
 <p hidden id="message"></p>
 <script src="options.js"></script>
 </body>
