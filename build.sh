@@ -19,8 +19,8 @@ cp src/PunchCard.js build/
 #cp src/sw.js build/
 cp src/background.png build/
 
-wget -c -N "https://introjs.com/minified/intro.min.js" -P build/
-wget -c -N "https://introjs.com/minified/introjs.min.css" -P build/
+cp node_modules/intro.js/minified/intro.min.js build/
+cp node_modules/intro.js/minified/introjs.min.css build/
 
 # https://github.com/PolymerLabs/crisper#usage-with-vulcanize
 vulcanize src/options.html --inline-script | crisper --html build/options.html --js build/options.js
@@ -30,8 +30,8 @@ vulcanize src/popup.html --inline-script | crisper --html build/popup.html --js 
 vulcanize test.html --inline-script | crisper --html build/test.html --js build/test.js
 cp node_modules/jasmine-core/images/jasmine_favicon.png build/
 cp node_modules/jasmine-core/lib/jasmine-core/jasmine.css build/
-sed -i "" s~node_modules/jasmine-core/images/~~g build/test.html
-sed -i "" s~node_modules/jasmine-core/lib/jasmine-core/~~g build/test.html
+echo `sed s~node_modules/jasmine-core/images/~~g build/test.html` > build/test.html
+echo `sed s~node_modules/jasmine-core/lib/jasmine-core/~~g build/test.html` > build/test.html
 
 rm github-punchcard.zip
 pushd build

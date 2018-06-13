@@ -62,6 +62,9 @@ document.querySelector("#token").onclick = function() {
 								document.querySelector("#message").hidden = false;
 								document.querySelector("#message").innerText = response.error + " - click here to find more.";
 								document.querySelector("#message").onclick = function() {
+									/*
+									 * TODO cancel the click (prompt) when the tab is closed
+									 */
 									chrome.tabs.update(tabId, { active: true });
 									return false;
 								};
