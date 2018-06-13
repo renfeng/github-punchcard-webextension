@@ -193,37 +193,6 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponseCallb
 			if (document.querySelector("#sudo_password")) {
 				sendResponseCallback({tokenGuide: "generate"});
 			} else {
-				/*
-				 * https://stackoverflow.com/questions/16230886/trying-to-fire-the-onload-event-on-script-tag
-				 */
-				promise = fetch("https://introjs.com/minified/intro.min.js").then(function(response) {
-					if (response.status === 200 || response.status === 0) {
-						return Promise.resolve(response.text());
-					} else {
-						return Promise.reject(response.status + " (" + response.statusText + ")");
-					}
-				}).then(function(text) {
-					var stepScript = document.createElement("script");
-					document.head.appendChild(stepScript);
-					stepScript.type = "text/javascript";
-					stepScript.innerHTML = text + "introJs().start();";
-				});
-
-				/*
-				 * https://stackoverflow.com/questions/2879509/dynamically-loading-javascript-synchronously
-				 */
-				promise = fetch("https://introjs.com/minified/introjs.min.css").then(function(response) {
-					if (response.status === 200 || response.status === 0) {
-						return Promise.resolve(response.text());
-					} else {
-						return Promise.reject(response.status + " (" + response.statusText + ")");
-					}
-				}).then(function(text) {
-					var stepStyle = document.createElement("style");
-					stepStyle.innerHTML = text;
-					document.head.appendChild(stepStyle);
-				});
-
 				var step1 = document.querySelector("#oauth_access_description");
 				var isFirefox = typeof InstallTrigger !== 'undefined';
 				step1.value = "Github Punchcard Web Extension for " + (isFirefox ? "Firefox" : "Chrome");
@@ -242,6 +211,8 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponseCallb
 //				step3.click();
 				step3.setAttribute("data-intro", "Click the button when you're ready.");
 				step3.setAttribute("data-step", 3);
+
+				introJs().start();
 
 				sendResponseCallback({tokenGuide: "copy"});
 			}

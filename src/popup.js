@@ -91,6 +91,9 @@ chrome.tabs.query({ active: true, currentWindow: true }, function(tabs){
 							} else if (response.private && message == "401 (Unauthorized)") {
 								document.querySelector("#msg").innerText = "This is a private repository. The personal access token acquired has been revoked.";
 								document.querySelector("#diagnose").hidden = false;
+							} else if (message == "204 (No Content)" && document.querySelector(".repository-content")
+									.innerText.startsWith("This repository is empty.")) {
+								document.querySelector("#msg").innerText = "This repository is empty.";
 							} else {
 								document.querySelector("#msg").innerText = message;
 								document.querySelector("#msg-feedback").hidden = false;

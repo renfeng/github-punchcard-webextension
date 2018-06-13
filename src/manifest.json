@@ -30,7 +30,11 @@
 		{
 			"js": [
 				"content.js",
-				"PunchCard.js"
+				"PunchCard.js",
+				"intro.min.js"
+			],
+			"css": [
+				"introjs.min.css"
 			],
 			"matches": [
 				"https://github.com/*"

@@ -19,6 +19,9 @@ cp src/PunchCard.js build/
 #cp src/sw.js build/
 cp src/background.png build/
 
+wget -c -N "https://introjs.com/minified/intro.min.js" -P build/
+wget -c -N "https://introjs.com/minified/introjs.min.css" -P build/
+
 # https://github.com/PolymerLabs/crisper#usage-with-vulcanize
 vulcanize src/options.html --inline-script | crisper --html build/options.html --js build/options.js
 vulcanize src/popup.html --inline-script | crisper --html build/popup.html --js build/popup.js
