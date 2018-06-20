@@ -22,40 +22,50 @@
 	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 	<meta name="apple-mobile-web-app-title" content="Github Punchcard"/>
 
+	<!--<link rel="stylesheet" href="PunchCard.css"/>-->
 	<style>
 		body {
-			width: 40em;
+			mix-width: 40em;
 		}
 
-		body.punchcard {
+		.punchcard {
 			background-image: url(background.png);
 			background-repeat: no-repeat;
-			width: 787px;
-			height: 432px;
+			width: 730px;
+			height: 401px;
 			margin: 0px;
 		}
 
-		table {
+		.punchcard table {
 			position: relative;
-			left: 80px;
+			left: 74px;
 		}
 
-		tr {
-			height: 55px;
+		.punchcard tr {
+			height: 51px;
 		}
 
-		tr:last-of-type {
+		.punchcard tr:last-of-type {
 			display: none;
 		}
 
-		th {
+		/*
+		.punchcard th {
 			display: none;
 		}
+		*/
 
-		td {
+		.punchcard td {
 			width: 25px;
+			padding: 0px;
 		}
-	</style>
+
+		.punchcard div {
+			margin: auto;
+			background-color: #444444;
+			border-radius: 50%;
+		}
+</style>
 </head>
 <body>
 <!--<div id="container" style="background-image: url(background.png); width: 922px; height: 506px;"></div>-->

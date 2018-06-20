@@ -29,11 +29,12 @@
 	"content_scripts": [
 		{
 			"js": [
-				"content.js",
 				"PunchCard.js",
+				"content.js",
 				"intro.min.js"
 			],
 			"css": [
+				"PunchCard.css",
 				"introjs.min.css"
 			],
 			"matches": [

@@ -15,6 +15,7 @@ cp src/background.js build/
 
 cp src/content.js build/
 cp src/PunchCard.js build/
+cp src/PunchCard.css build/
 
 #cp src/sw.js build/
 cp src/background.png build/

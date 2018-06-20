@@ -51,6 +51,9 @@ function inject(user, repo, page, graph) {
 		var disabled = document.body.innerText.indexOf("This repository has been disabled.") != -1;
 		var user = document.querySelector("strong.css-truncate-target");
 
+		/*
+		 * TODO use token for 403 (Forbidden)
+		 */
 		if (private) {
 			return new Promise(function(resolve, reject) {
 				chrome.storage.sync.get(["token"], function(result) {

@@ -47,6 +47,9 @@ chrome.tabs.query({ active: true, currentWindow: true }, function(tabs){
 						document.querySelector("#msg").innerText = "This repository has been disabled.";
 					} else {
 						var promise = Promise.resolve();
+						/*
+						 * TODO use token for 403 (Forbidden)
+						 */
 						if (response.private) {
 							promise = new Promise(function(resolve, reject) {
 								chrome.storage.sync.get(["token"], function(result) {
@@ -69,8 +72,6 @@ chrome.tabs.query({ active: true, currentWindow: true }, function(tabs){
 							.then(function(punchCard) {
 								return punchCard.render(document.querySelector("#container"));
 							});
-						}).then(function() {
-							document.body.classList.add("punchcard");
 						}).catch(function(message) {
 							/*
 							 * https://stackoverflow.com/questions/3468607/why-does-settimeout-break-for-large-millisecond-delay-values

@@ -37,27 +37,19 @@ function PunchCard(authorization) {
 		});
 	};
 
-	function weekDay(index) {
-		return ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][index];
-	}
+//	function weekDay(index) {
+//		return ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][index];
+//	}
+
 	function r(hour) {
 		return Math.sqrt(hour);
 	}
+
 	function diameter(hour) {
 		return Math.ceil(r(hour) * 2);
 	}
 
 	this.render = function (c) {
-
-		var minSpace = 25;
-//		for (var day of self.table) {
-//			for (var hour of day) {
-//				var d = diameter(hour);
-//				if (minSpace < d) {
-//					minSpace = d;
-//				}
-//			}
-//		}
 
 		/*
 		 * TODO make it look more like the original graph
@@ -67,18 +59,17 @@ function PunchCard(authorization) {
 			var day = self.table[d];
 			var r = document.createElement("tr");
 
-			var h = document.createElement("th");
-			h.innerText = weekDay(d);
-			h.style = "text-align: right;";
-			r.appendChild(h);
+//			var h = document.createElement("th");
+//			h.innerText = weekDay(d);
+//			h.style = "text-align: right;";
+//			r.appendChild(h);
 
 			for (var hour of day) {
 				var d = document.createElement("td");
-				d.style = "width: " + minSpace + "px; height: " + minSpace + "px;";
 				r.appendChild(d);
 
 				var v = document.createElement("div");
-				v.style = "margin: auto; background-color: #444444; border-radius: 50%; width: " + diameter(hour) + "px; height: " + diameter(hour) + "px;";
+				v.style = "width: " + diameter(hour) + "px; height: " + diameter(hour) + "px;";
 				d.appendChild(v);
 			}
 
@@ -87,16 +78,18 @@ function PunchCard(authorization) {
 
 		var r = document.createElement("tr");
 
-		var h = document.createElement("th");
-		r.appendChild(h);
-		for (var i = 0; i < 24; i++) {
-			h = document.createElement("th");
-			h.innerText = i;
-			r.appendChild(h);
-		}
+//		var h = document.createElement("th");
+//		r.appendChild(h);
+//		for (var i = 0; i < 24; i++) {
+//			h = document.createElement("th");
+//			h.innerText = i;
+//			r.appendChild(h);
+//		}
+
 		t.appendChild(r);
 
 		c.appendChild(t);
+		c.classList.add("punchcard");
 
 		return Promise.resolve(self);
 	}
