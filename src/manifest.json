@@ -19,8 +19,6 @@
 		"open_in_tab": true
 	},
 	"permissions": [
-		"webRequest",
-		"webRequestBlocking",
 		"tabs",
 		"storage",
 		"https://api.github.com/*",
@@ -29,18 +27,27 @@
 	"content_scripts": [
 		{
 			"js": [
-				"PunchCard.js",
 				"content.js",
-				"intro.min.js"
+				"PunchCard.js"
 			],
 			"css": [
-				"PunchCard.css",
-				"introjs.min.css"
+				"PunchCard.css"
 			],
 			"matches": [
 				"https://github.com/*"
 			],
 			"run_at": "document_start"
+		},
+		{
+			"js": [
+				"intro.min.js"
+			],
+			"css": [
+				"introjs.min.css"
+			],
+			"matches": [
+				"https://github.com/settings/tokens/new"
+			]
 		}
 	]
 }

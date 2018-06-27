@@ -11,7 +11,7 @@ function PunchCard(authorization) {
 				authorization: authorization
 			}
 		}).then(function(response) {
-			if (response.status === 200 || response.status === 0) {
+			if (response.status == 200 || response.status == 0) {
 				return Promise.resolve(response.json());
 			} else {
 				return Promise.reject(response.status + " (" + response.statusText + ")");
@@ -33,7 +33,7 @@ function PunchCard(authorization) {
 
 			self.table = table;
 
-			return Promise.resolve(self);
+			return self;
 		});
 	};
 
@@ -91,6 +91,6 @@ function PunchCard(authorization) {
 		c.appendChild(t);
 		c.classList.add("punchcard");
 
-		return Promise.resolve(self);
+		return self;
 	}
 }

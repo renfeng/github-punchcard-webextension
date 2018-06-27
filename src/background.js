@@ -1,37 +1,53 @@
-//"https://github.com/*/*/pulse",
-//"https://github.com/*/*/graphs/contributors",
-//"https://github.com/*/*/community",
-//"https://github.com/*/*/graphs/traffic",
-//"https://github.com/*/*/graphs/commit-activity",
-//"https://github.com/*/*/graphs/code-frequency",
-//"https://github.com/*/*/network/dependencies",
-//"https://github.com/*/*/network",
-//"https://github.com/*/*/network/members"
-var urlPattern1 = new RegExp("https://github.com/([^/]+)/([^/]+)/(pulse|graphs/contributors|community|graphs/traffic|graphs/commit-activity|graphs/code-frequency|network/dependencies|network|network/members)");
-
-var urlPattern2 = new RegExp("https://github.com/([^/]+)/([^/]+)/graphs/punchcard");
+/*
+ * https://stackoverflow.com/questions/17377337/where-to-find-extensions-installed-folder-for-google-chrome-on-mac
+ */
 
 /*
- * https://stackoverflow.com/questions/2149917/chrome-extensions-how-to-know-when-a-tab-has-finished-loading-from-the-backgr
+ * Punchcard will be added to the menu on the pages under Insights.
+ *  - Pulse (pulse)
+ *  - Contributors (graphs/contributors)
+ *  - Community (community)
+ *  - Traffic (graphs/traffic)
+ *  - Commits (graphs/commit-activity)
+ *  - Code frequency (graphs/code-frequency)
+ *  - Dependency graph (network/dependencies)
+ *  - Network (network)
+ *  - Forks (network/members)
+ *
+ * Note: it's impossible to precisely match the minimum set of relevant urls.
+ * So, a simple pattern is chosen, content_scripts.matches = "https://github.com/*"
+ *
+ * See https://developer.chrome.com/extensions/match_patterns
+ *
+ * Regular expressions will narrow the scope, and extract repository id.
  */
+var insightPageUrlPattern = new RegExp("https://github.com/([^/]+)/([^/]+)/(pulse|graphs/contributors|community|graphs/traffic|graphs/commit-activity|graphs/code-frequency|network/dependencies|network|network/members)");
+
+/*
+ * Punchcard will be served as a replacement of the 404 page for Chrome.
+ */
+var punchcardUrlPattern = new RegExp("https://github.com/([^/]+)/([^/]+)/graphs/punchcard");
+
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo) {
-	if (changeInfo.status != chrome.tabs.TabStatus.COMPLETE) {
+
+	/*
+	 * https://stackoverflow.com/questions/2149917/chrome-extensions-how-to-know-when-a-tab-has-finished-loading-from-the-backgr
+	 */
+	if (!changeInfo.status) {
 		return;
 	}
 
-//	console.log(tabId);
-//	console.log(changeInfo);
-
 	chrome.tabs.get(tabId, function(tab) {
 
-		var g = tab.url.match(urlPattern1);
+		g = tab.url.match(insightPageUrlPattern);
 		if (g) {
 			chrome.tabs.sendMessage(tabId, {
+				action: "insert-menu",
 				user: g[1],
 				repo: g[2],
-				page: g[3],
 			}, function(response) {
 				if (response) {
+					console.log(tab.url);
 					console.log(response);
 				} else {
 					console.log(chrome.runtime.lastError);
@@ -40,65 +56,41 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo) {
 			return;
 		}
 
-		g = tab.url.match(urlPattern2);
+		/*
+		 * Here are some ideas tested and abandoned.
+		 *  - chrome.webRequest cannot be used to modified http response. Neither is redirect desirable as it changes url.
+		 *  - a 404 page cannot be stopped from loading using the technique found here,
+		 *    https://stackoverflow.com/questions/26119027/chrome-extension-stop-loading-the-page-on-launch
+		 *  - impossible to intercept an http request (to a 404 page, graphs/punchcard) with service worker
+		 *    because both https and same origin required.
+		 *    And, it's impossible to serve service workers from CDN/remote origin,
+		 *    https://github.com/w3c/ServiceWorker/issues/940
+		 */
+		g = tab.url.match(punchcardUrlPattern);
 		if (g) {
-//				/*
-//				 * https://stackoverflow.com/questions/26119027/chrome-extension-stop-loading-the-page-on-launch
-//				 * cannot stop a 404 page any more
-//				 */
-//				chrome.tabs.executeScript(tabId, {
-//					code: "window.stop();",
-//					runAt: "document_start"
-//				});
+			/*
+			 * For punch card graph, which is a 404 page, load sample page (/pulse) as early as possible
+			 * (by setting content_scripts.run_at = "document_start", and content script caching sample page in sessionStorage)
+			 */
 			chrome.tabs.sendMessage(tabId, {
+				action: "render-graph",
 				user: g[1],
 				repo: g[2],
-				page: "graphs/punchcard",
 			}, function(response) {
 				if (response) {
+					console.log(tab.url);
 					console.log(response);
 				} else {
 					console.log(chrome.runtime.lastError);
 				}
 			});
-			return;
 		}
 	});
 });
 
-//chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
-//	console.log("message received by background");
-//	sendResponse();
-//});
-
 /*
- * The following is useless due to not possible to modify response
- *
- * As this function uses a blocking event handler, it requires the "webRequest" as well as the "webRequestBlocking"
- * permission in the manifest file. - https://developer.chrome.com/extensions/webRequest
+ * https://developer.chrome.com/apps/runtime#method-sendMessage
  */
-chrome.webRequest.onBeforeRequest.addListener(function(details) {
-	console.log(details);
-	g = details.url.match(urlPattern2);
-	if (g) {
-		/*
-		 * won't reach here if the link is canceled
-		 */
-
-//		console.log("redirecting");
-//		return {
-//			/*
-//			 * https://stackoverflow.com/questions/6373117/how-to-get-my-extensions-id-from-javascript
-//			 */
-//			redirectUrl: "chrome-extension://" + chrome.runtime.id + "/options.html#" + g[1] + "/" + g[2],
-//		};
-		console.log("canceling");
-		return {
-			cancel: true,
-		};
-	}
-}, {
-//	urls: ["https://github.com/*/*/graphs/punchcard"]
-}, [
-	"blocking"
-]);
+chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
+	sendResponse("message received by background");
+});

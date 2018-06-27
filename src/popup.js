@@ -1,4 +1,9 @@
 /*
+ * https://stackoverflow.com/questions/9847580/how-to-detect-safari-chrome-ie-firefox-and-opera-browser/9851769
+ */
+var isFirefox = typeof InstallTrigger != 'undefined';
+
+/*
  * https://stackoverflow.com/questions/5039875/debug-popup-html-of-a-chrome-extension
  */
 document.querySelector("#diagnose").onclick = function() {
@@ -10,17 +15,14 @@ document.querySelector("#diagnose").onclick = function() {
 }
 
 /*
- * https://developer.chrome.com/extensions/tabs#method-getCurrent
- * May be undefined if called from a non-tab context (for example: a background page or popup view).
- */
-//chrome.tabs.getCurrent(function(tab){
-/*
  * https://stackoverflow.com/questions/13359421/chrome-extension-get-current-tab-from-popup
+ *
+ * chrome.tabs.getCurrent() may return undefined if called from a
+ * non-tab context (for example: a background page or popup view).
+ * https://developer.chrome.com/extensions/tabs#method-getCurrent
  */
 chrome.tabs.query({ active: true, currentWindow: true }, function(tabs){
 	var tab = tabs[0];
-	console.log("popup");
-//	console.log(tab);
 	var urlPattern1 = new RegExp("^https://github.com/([^/]+)/([^/#]+)");
 	var g = tab.url.match(urlPattern1);
 	if (g) {
@@ -31,15 +33,15 @@ chrome.tabs.query({ active: true, currentWindow: true }, function(tabs){
 			document.querySelector("#msg-invalid").hidden = false;
 		} else {
 			/*
-			 * get information on current tab
-			 * valid - is it a valid github repository
-			 * private - is it private
-			 * user - current authenticated username
+			 * ask content script to get information about the page
+			 *  - valid - is it a valid github repository
+			 *  - private - is it private
+			 *  - user - current authenticated username
 			 */
 			chrome.tabs.sendMessage(tab.id, {
+				action: "probe"
 			}, function(response) {
 				if (response) {
-					//console.log(response);
 					if (response.img404) {
 						document.querySelector("#parallax_error_text").src = response.img404;
 						document.querySelector("#parallax_error_text").hidden = false;
@@ -55,11 +57,8 @@ chrome.tabs.query({ active: true, currentWindow: true }, function(tabs){
 								chrome.storage.sync.get(["token"], function(result) {
 									if (result) {
 										console.log("Value currently is " + result.token);
-										//var token = "ff51dfc5b95cd64800b39fe17fae787f8c6bea34";
-										var token = result.token;
-										resolve("Basic " + btoa(response.user + ":" + token));
+										resolve("Basic " + btoa(response.user + ":" + result.token));
 									} else {
-										var isFirefox = typeof InstallTrigger !== 'undefined';
 										if (isFirefox) {
 											reject("Please set webextensions.storage.sync.enabled to true in about:config");
 										}
@@ -73,12 +72,6 @@ chrome.tabs.query({ active: true, currentWindow: true }, function(tabs){
 								return punchCard.render(document.querySelector("#container"));
 							});
 						}).catch(function(message) {
-							/*
-							 * https://stackoverflow.com/questions/3468607/why-does-settimeout-break-for-large-millisecond-delay-values
-							 * https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setTimeout
-							 */
-							//var maxDelay = 2147483647;
-
 							/*
 							 * Requests that require authentication will return 404 Not Found
 							 * https://developer.github.com/v3/#authentication
