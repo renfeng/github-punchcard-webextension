@@ -214,7 +214,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponseCallb
 
 					response = "render-graph: rendering";
 				}
-			} else {
+			} else if (document.readyState == "loading") {
 				var user = message.user;
 				var repo = message.repo;
 				fetch("https://github.com/" + user + "/" + repo + "/pulse", {
@@ -259,6 +259,8 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponseCallb
 				});
 
 				response = "render-graph: sample page loading";
+			} else {
+				response = "render-graph: ignored ready state other than loading";
 			}
 		} else if (message.action == "probe") {
 			var img404 = document.querySelector("img[alt='404 “This is not the web page you are looking for”']");
