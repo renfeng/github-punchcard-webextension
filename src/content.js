@@ -52,6 +52,10 @@ function renderGraph(user, repo) {
 
 	/*
 	 * TODO use token for 403 (Forbidden)
+{
+  "message": "API rate limit exceeded for 46.101.82.23. (But here's the good news: Authenticated requests get a higher rate limit. Check out the documentation for more details.)",
+  "documentation_url": "https://developer.github.com/v3/#rate-limiting"
+}
 	 */
 	var promise;
 	if (private) {
@@ -205,16 +209,15 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponseCallb
 				} else {
 					document.head.innerHTML = page.head;
 					document.body.innerHTML = page.body;
-
 					insertMenu(message.user, message.repo);
-
 					renderGraph(message.user, message.repo);
+
 					response = "render-graph: rendering";
 				}
 			} else {
 				var user = message.user;
 				var repo = message.repo;
-				var promise = fetch("https://github.com/" + user + "/" + repo + "/pulse", {
+				fetch("https://github.com/" + user + "/" + repo + "/pulse", {
 					credentials: "include"
 				}).then(function(response) {
 					if (response.status == 200 || response.status == 0) {
@@ -249,8 +252,12 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponseCallb
 					};
 					sessionStorage.setItem("page", JSON.stringify(page));
 
-					return page;
+					document.head.innerHTML = page.head;
+					document.body.innerHTML = page.body;
+					insertMenu(message.user, message.repo);
+					renderGraph(message.user, message.repo);
 				});
+
 				response = "render-graph: sample page loading";
 			}
 		} else if (message.action == "probe") {

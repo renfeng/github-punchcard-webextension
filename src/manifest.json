@@ -1,8 +1,8 @@
 {
 	"manifest_version": 2,
 	"name": "Github Punchcard",
-	"version": "1.1",
-	"description": "Restores Github Punchcard graph",
+	"version": "1.2",
+	"description": "Make Github Punchcard great again!",
 	"background": {
 		"scripts": [
 			"background.js"

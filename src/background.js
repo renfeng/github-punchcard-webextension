@@ -68,6 +68,10 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo) {
 		 */
 		g = tab.url.match(punchcardUrlPattern);
 		if (g) {
+			if (changeInfo.status != chrome.tabs.TabStatus.LOADING) {
+				return;
+			}
+
 			/*
 			 * For punch card graph, which is a 404 page, load sample page (/pulse) as early as possible
 			 * (by setting content_scripts.run_at = "document_start", and content script caching sample page in sessionStorage)
