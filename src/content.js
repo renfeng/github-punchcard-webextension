@@ -269,10 +269,10 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponseCallb
 			var login = document.querySelector("strong.css-truncate-target");
 
 			response = {
-				img404: img404&&img404.src,
+				img404: img404 && img404.src,
 				private: private,
 				disabled: disabled,
-				user: login&&login.innerText,
+				user: login && login.innerText,
 			};
 		} else {
 			response = "unimplemented";
