@@ -1,12 +1,18 @@
-# Chrome Web Store
+# Github Punchcard WebExtension
+
+## Chrome Web Store
 
 https://chrome.google.com/webstore/detail/github-punchcard/bpbennifjflmjcnoofbeaoiffphdbbad
 
-# Add-ons for Firefox
+## Add-ons for Firefox
 
 https://addons.mozilla.org/en-US/firefox/addon/github-punchcard/
 
-# Background Story
+## Build from source
+
+```./build.sh```
+
+## Background Story
 
 http://openmymind.net/How-Meaningful-Do-You-Find-Github-Punchard/
 
@@ -18,6 +24,6 @@ https://github.com/blog/1093-introducing-the-new-github-graphs
 
 https://github.com/guanqun/git-punchcard-plot
 
-# TODO
+## TODO
 
 https://docs.microsoft.com/en-us/microsoft-edge/extensions
