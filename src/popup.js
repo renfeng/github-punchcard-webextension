@@ -21,7 +21,7 @@ document.querySelector("#diagnose").onclick = function() {
  * non-tab context (for example: a background page or popup view).
  * https://developer.chrome.com/extensions/tabs#method-getCurrent
  */
-chrome.tabs.query({ active: true, currentWindow: true }, function(tabs){
+chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
 	var tab = tabs[0];
 	var urlPattern1 = new RegExp("^https://github.com/([^/]+)/([^/#]+)");
 	var g = tab.url.match(urlPattern1);

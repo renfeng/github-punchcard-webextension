@@ -1,7 +1,7 @@
 {
 	"manifest_version": 2,
 	"name": "Github Punchcard",
-	"version": "1.4",
+	"version": "1.6",
 	"description": "Make Github Punchcard great again!",
 	"background": {
 		"scripts": [
@@ -40,14 +40,17 @@
 		},
 		{
 			"js": [
-				"intro.min.js"
+				"intro.js"
 			],
 			"css": [
-				"introjs.min.css"
+				"introjs.css"
 			],
 			"matches": [
 				"https://github.com/settings/tokens/new"
 			]
 		}
+	],
+	"web_accessible_resources": [
+		"background.png"
 	]
 }

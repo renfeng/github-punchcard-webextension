@@ -60,7 +60,7 @@ function renderGraph(user, repo) {
 	var promise;
 	if (private) {
 		promise = new Promise(function(resolve, reject) {
-			chrome.storage.sync.get(["token"], function(result) {
+			chrome.storage.sync.get("token", function(result) {
 				if (result) {
 					console.log("Value currently is " + result.token);
 					var token = result.token;
@@ -94,7 +94,7 @@ function renderGraph(user, repo) {
 		var b = document.querySelector("a[href='/" + user + "/" + repo + "/" + "graphs/punchcard" + "' i]");
 		b.classList.add("selected");
 
-		var c = document.querySelector("div.column.three-fourths");
+		var c = document.querySelector("div.col-9");
 		if (c) {
 			/*
 			 * https://stackoverflow.com/questions/3955229/remove-all-child-elements-of-a-dom-node-in-javascript
@@ -131,7 +131,7 @@ function renderGraph(user, repo) {
 				}
 			});
 		} else {
-			return Promise.reject("container not found: div.column.three-fourths");
+			return Promise.reject("container not found: div.col-9");
 		}
 	}).catch(function(error) {
 		/*

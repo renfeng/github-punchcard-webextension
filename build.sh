@@ -19,8 +19,8 @@ cp src/PunchCard.css build/
 
 cp src/background.png build/
 
-cp node_modules/intro.js/minified/intro.min.js build/
-cp node_modules/intro.js/minified/introjs.min.css build/
+cp node_modules/intro.js/intro.js build/
+cp node_modules/intro.js/introjs.css build/
 
 # https://github.com/PolymerLabs/crisper#usage-with-vulcanize
 vulcanize src/options.html --inline-script | crisper --html build/options.html --js build/options.js
